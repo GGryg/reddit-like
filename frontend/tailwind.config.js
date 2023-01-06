@@ -5,11 +5,13 @@ module.exports = {
     extend: {
       colors: {
         dark: {
-          DEFAULT: '#202023'
+          DEFAULT: '#202023',
+          lighter: '#2c2c30',
         }
       },
       spacing: {
-        '128': '32rem'
+        '128': '32rem',
+        '256': '64rem'
       }
     },
   },
