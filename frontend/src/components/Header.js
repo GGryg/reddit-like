@@ -3,6 +3,7 @@ import { TfiSearch } from 'react-icons/tfi';
 import { BsChatDots } from 'react-icons/bs'
 import { IoNotificationsOutline, IoAddCircleOutline } from 'react-icons/io5'
 import { MdOutlineManageAccounts } from 'react-icons/md'
+import { Link } from 'react-router-dom';
 
 const Header = () => {
     const isLogged = false;
@@ -31,7 +32,7 @@ const Header = () => {
             </button>
         </div>) : (
                 <div>
-                    <button className='py-1 px-3 text-gray-300 bg-gray-700 rounded-lg'>Log In</button>
+                    <Link to='/login'><button className='py-1 px-3 text-gray-300 bg-gray-700 rounded-lg'>Log In</button></Link>
                     <button className='py-1 px-3 text-gray-300 mx-7 bg-gray-700 rounded-lg'>Sign Up</button>
                 </div>
         )}
