@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import Header from './components/Header';
 import LogIn from './components/LogIn';
+import Register from './components/Register';
 import TopicBoard from './components/TopicBoard';
 
 function App() {
@@ -10,6 +11,7 @@ function App() {
       <Header />
     <Routes>
       <Route path='/login' element={<LogIn />} />
+      <Route path='/register' element={<Register />} />
     </Routes>
       <TopicBoard />
     </BrowserRouter>
