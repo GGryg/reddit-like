@@ -1,4 +1,4 @@
-import { Formik, Field, validateYupSchema } from 'formik';
+import { Formik, Field } from 'formik';
 
 const Register = () => {
     const initialValues = {
@@ -16,9 +16,10 @@ const Register = () => {
         /*
         *   Later add valitation for not repeating email and username
         */
-       if(values.password = '') errors.password = 'Password is required';
+       if(values.password === '') errors.password = 'Password is required';
        else if(!/^[A-Z0-9_]{6,}$/i.test(values.email)) errors.password = 'Password needs to be at least 6 characters and only letters, numbers and _ is allowed';
-       if(values.password2 == values.password) errors.password2 = "Passwords aren't identical";
+       if(values.password2 === values.password) errors.password2 = "Passwords aren't identical";
+       return errors;
     }
 
     return (
@@ -55,7 +56,7 @@ const Register = () => {
                             <Field type='text' name='password2' />
                             {values.errors.password2 ? (<div className='text-red-400'>{values.errors.password2}</div>) : null}
                         </div>
-                        <button className='bg-gray-700 text-gray-300 my-4 px-3 py-1 align-center'>Register</button>
+                        <button type='submit' className='bg-gray-700 text-gray-300 my-4 px-3 py-1 rounded-lg'>Register</button>
                     </form>
                 )}
             </Formik>

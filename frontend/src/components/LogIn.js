@@ -34,7 +34,7 @@ const LogIn = () => {
                             <Field type='password' name='password' />
                             {values.errors.password ? (<div className='text-red-400'>{values.errors.password}</div>) : null}
                         </div>
-                        <button className='bg-gray-700 text-gray-300 my-4 px-3 py-1 align-center'>Log In</button>
+                        <button className='bg-gray-700 text-gray-300 my-4 px-3 py-1 rounded-lg'>Log In</button>
                     </form>
                 )}
             </Formik>
