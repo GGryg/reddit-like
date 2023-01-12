@@ -1,6 +1,9 @@
 import { Formik, Field } from 'formik';
+import { connect } from 'react-redux';
+import { v4 } from 'uuid';
+import { registerUser } from '../actions/UsersActions';
 
-const Register = () => {
+const Register = ({registerUser}) => {
     const initialValues = {
         email: '',
         username: '',
@@ -17,15 +20,26 @@ const Register = () => {
         *   Later add valitation for not repeating email and username
         */
        if(values.password === '') errors.password = 'Password is required';
-       else if(!/^[A-Z0-9_]{6,}$/i.test(values.email)) errors.password = 'Password needs to be at least 6 characters and only letters, numbers and _ is allowed';
-       if(values.password2 === values.password) errors.password2 = "Passwords aren't identical";
+       //else if(!/^[a-zA-Z0-9_]{6,}$/i.test(values.email)) errors.password = 'Password needs to be at least 6 characters and only letters, numbers and _ is allowed';
+       if(values.password2 !== values.password) errors.password2 = "Passwords aren't identical";
+       console.log(values.password + ' r ' + values.password2);
        return errors;
-    }
+    };
+
+    const handleSubmit = (values, actions) => {
+        const newUser = {
+            id: v4(),
+            email: values.username,
+            username: values.email,
+            password: values.password,
+        };
+        registerUser(newUser);
+    };
 
     return (
         <div className='bg-dark flex flex-col items-center'>
             <h2 className='text-gray-300 text-3xl my-4'>Register</h2>
-            <Formik initialValues={initialValues} validate={validate} >
+            <Formik initialValues={initialValues} validate={validate} onSubmit={handleSubmit}>
                 {(values) => (
                     <form onSubmit={values.handleSubmit} className='flex flex-col items-center'>
                         <div className='my-4'>
@@ -53,7 +67,7 @@ const Register = () => {
                             <label className='text-gray-300 text-xl'>
                                 Repeat password
                             </label><br />
-                            <Field type='text' name='password2' />
+                            <Field type='password' name='password2' />
                             {values.errors.password2 ? (<div className='text-red-400'>{values.errors.password2}</div>) : null}
                         </div>
                         <button type='submit' className='bg-gray-700 text-gray-300 my-4 px-3 py-1 rounded-lg'>Register</button>
@@ -61,7 +75,15 @@ const Register = () => {
                 )}
             </Formik>
         </div>
-    )
-}
+    );
+};
 
-export default Register;
+const mapStateToProps = (state) => ({
+    errors: state.errors,
+});
+
+const mapDispatchToProps = {
+    registerUser
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Register);
