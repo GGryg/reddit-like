@@ -20,7 +20,7 @@ const Register = ({registerUser}) => {
         *   Later add valitation for not repeating email and username
         */
        if(values.password === '') errors.password = 'Password is required';
-       //else if(!/^[a-zA-Z0-9_]{6,}$/i.test(values.email)) errors.password = 'Password needs to be at least 6 characters and only letters, numbers and _ is allowed';
+       else if(!/^[a-zA-Z0-9_]{6,}$/i.test(values.password)) errors.password = 'Password needs to be at least 6 characters and only letters, numbers and _ is allowed';
        if(values.password2 !== values.password) errors.password2 = "Passwords aren't identical";
        console.log(values.password + ' r ' + values.password2);
        return errors;
