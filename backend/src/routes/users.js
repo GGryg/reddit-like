@@ -1,49 +1,102 @@
-"use strict";
-
+const e = require('express');
 const express = require('express');
 
-const neo4jc = require('./../neo4j/neo4j_api');
-
 const router = express.Router();
+const dbo = require('./../db/conn');
 
-router.get('/', async (req, res) => {
-    res.status(200).send('Root response from: 4000/users');
-    return 700000;
+router.route('/users').get(async (req, res) => {
+    const dbConnect = dbo.getDb();
+
+    dbConnect
+        .collection("users")
+        .find({})
+        .toArray((err, result) => {
+            if (err){
+                res.status(400).send("Error fetching user");
+            }
+            else{
+                res.json(result);
+            }
+        });
 });
 
-router.get('/get_amount', async (req, res) => {
-    const ret = await neo4jc.get_num_users();
-    console.log('Number of users: ', ret);
-    res.status(200).send({ ret });
-    return { ret };
+router.route('/users/:id').get(async (req, res) => {
+    const dbConnect = dbo.getDb();
+    const userQuery = {user_id: parseInt(req.params.id)};
+
+    dbConnect
+        .collection('users')
+        .findOne(userQuery, (err, result) => {
+            if (err){
+                res.status(400).send('Error fetching user');
+            }
+            else{
+                res.json(result);
+            }
+        });
 });
 
-router.post('/check_email', async (req, res) => {
-    const { email } = req.body;
-    const string = await neo4jc.check_if_email_exists(email);
-    res.status(200).send("Email exists: ", string);
-    return 700000;
+router.route('/users/register').post(async (req, res) => {
+    const dbConnect = dbo.getDb();
+    const matchDocument = {
+        user_id: req.body.id,
+        email: req.body.email,
+        username: req.body.username,
+        password: req.body.password
+    };
+
+    dbConnect
+        .collection("users")
+        .insertOne(matchDocument, (err, result) => {
+            if(err){
+                res.status(400).send("Error inserting");
+            }
+            else{
+                console.log('Added a new user id', result.insertedId);
+                res.status(204).send();
+            }
+        });
 });
 
-router.post('/check_username', async (req, res) => {
-    const { username } = req.body;
-    const string = await neo4jc.check_if_username_exists(username);
-    res.status(200).send("Username exists: " + string);
-    return 70000;
+router.route('/users/update/:id').post(async (req, res) => {
+    const dbConnect = dbo.getDb();
+    const userQuery = {user_id: parseInt(req.params.id)};
+    const updated = {
+        $set: {
+            email: req.body.email,
+            username: req.body.username,
+            password: req.body.password,
+        },
+    };
+
+    dbConnect
+        .collection('users')
+        .updateOne(userQuery, updated, (err, result) => {
+            if (err){
+                res.status(400).send('Error updating user');
+            }
+            else{
+                console.log('Updated 1 user');
+                res.json(result);
+            }
+        })
 })
 
-router.post('/register', async (req, res) => {
-    const { email, username, password } = req.body;
-    const string = await neo4jc.create_user(email, username, password);
-    res.status(200).send("User: " + string + " created");
-    return 700000;
-});
+router.route('/users/delete/:id').delete((req, res) => {
+    const dbConnect = dbo.getDb();
+    const userQuery = {user_id: parseInt(req.params.id)};
 
-router.delete('/delete', async (req, res) => {
-    const { username } = req.body;
-    await neo4jc.delete_user(username);
-    res.status(200).send("User deleted");
-    return 700000;
-})
+    dbConnect
+        .collection("users")
+        .deleteOne(userQuery, (err, result) => {
+            if (err){
+                res.status(400).send('Error deleting user with id', userQuery.user_id);
+            }
+            else{
+                console.log('Deleted 1 document');
+                res.json(result);
+            }
+        });
+});
 
 module.exports = router;
