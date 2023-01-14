@@ -1,4 +1,7 @@
 import { Formik, Field } from 'formik';
+import { connect } from 'react-redux';
+
+import { loginUser } from './../actions/UsersActions';
 
 const LogIn = () => {
     const initialValues = {
@@ -14,10 +17,19 @@ const LogIn = () => {
         return errors;
     }
 
+    const handleSubmit = (values, actions) => {
+        const user = {
+            username: values.username,
+            password: values.password,
+        };
+        loginUser(user);
+        actions.resetForm();
+    }
+
     return (
         <div className='bg-dark flex flex-col items-center'>
             <h2 className='text-gray-300 text-3xl my-4'>Log In</h2>
-            <Formik initialValues={initialValues} validate={validate} >
+            <Formik initialValues={initialValues} validate={validate} onSubmit={handleSubmit}>
                 {(values) => (
                     <form onSubmit={values.handleSubmit} className='flex flex-col items-center'>
                         <div className='my-4'>
@@ -34,7 +46,7 @@ const LogIn = () => {
                             <Field type='password' name='password' />
                             {values.errors.password ? (<div className='text-red-400'>{values.errors.password}</div>) : null}
                         </div>
-                        <button className='bg-gray-700 text-gray-300 my-4 px-3 py-1 rounded-lg'>Log In</button>
+                        <button type='submit' className='bg-gray-700 text-gray-300 my-4 px-3 py-1 rounded-lg'>Log In</button>
                     </form>
                 )}
             </Formik>
@@ -42,4 +54,12 @@ const LogIn = () => {
     )
 }
 
-export default LogIn;
+const mapStateToProps = state => ({
+    errors: state.errors
+});
+
+const mapDispatchToProps = {
+    loginUser,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(LogIn);

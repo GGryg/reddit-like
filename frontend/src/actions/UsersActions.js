@@ -5,7 +5,7 @@ export const SET_CURRENT_USER = 'SET_CURRENT_USER';
 
 export const registerUser = (user) => dispatch => {
     axios.post('http://localhost:4000/users/register', user)
-        .then(res => console.log(res))
+        .then(res => console.log(res.data))
         .catch(err => {
             dispatch({
                 type: GET_ERRORS,
@@ -16,7 +16,7 @@ export const registerUser = (user) => dispatch => {
 
 export const checkEmail = (email) => dispatch => {
     axios.get('http://localhost:4000/users/email/' + email)
-        .then(res => console.log(res))
+        .then(res => console.log(res.data))
         .catch(err => {
             dispatch({
                 type: GET_ERRORS,
@@ -27,11 +27,22 @@ export const checkEmail = (email) => dispatch => {
 
 export const checkUsername = (username) => dispatch => {
     axios.get('http://localhost:4000/users/name/' + username)
-        .then(res => console.log(res))
+        .then(res => console.log(res.data))
         .catch(err => {
             dispatch({
                 type: GET_ERRORS,
                 payload: err.res.data,
+            });
+        });
+};
+
+export const loginUser = (user) => dispatch => {
+    axios.post('http://localhost:4000/users/login', user)
+        .then(res => console.log(res.data))
+        .catch(err => {
+            dispatch({
+                type: GET_ERRORS,
+                payload: err.res.data
             });
         });
 };

@@ -33,7 +33,7 @@ const Header = () => {
         </div>) : (
                 <div>
                     <Link to='/login'><button className='py-1 px-3 text-gray-300 bg-gray-700 rounded-lg'>Log In</button></Link>
-                    <Link to='/register'><button className='py-1 px-3 text-gray-300 mx-7 bg-gray-700 rounded-lg'>Sign Up</button></Link>
+                    <Link to='/register'><button className='py-1 px-3 text-gray-300 mx-7 bg-gray-700 rounded-lg'>Register</button></Link>
                 </div>
         )}
   </header>
