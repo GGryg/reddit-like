@@ -1,7 +1,9 @@
-const e = require('express');
 const express = require('express');
-
 const router = express.Router();
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const passport = require('passport');
+
 const dbo = require('./../db/conn');
 
 router.route('/users').get(async (req, res) => {
@@ -38,16 +40,28 @@ router.route('/users/:id').get(async (req, res) => {
 
 router.route('/users/register').post(async (req, res) => {
     const dbConnect = dbo.getDb();
-    const matchDocument = {
+    const userQuery = {
         user_id: req.body.id,
         email: req.body.email,
         username: req.body.username,
         password: req.body.password
     };
 
+    bcrypt.genSalt(10, (err, salt) => {
+        if(err) console.error(err);
+        else{
+            bcrypt.hash(userQuery.password, salt, (err, hash) => {
+                if(err) console.error(err);
+                else{
+                    userQuery.password = hash;
+                }
+            });
+        }
+    });
+
     dbConnect
         .collection("users")
-        .insertOne(matchDocument, (err, result) => {
+        .insertOne(userQuery, (err, result) => {
             if(err){
                 res.status(400).send("Error inserting");
             }
@@ -56,6 +70,52 @@ router.route('/users/register').post(async (req, res) => {
                 res.status(204).send();
             }
         });
+});
+
+router.route('users/login').post(async (req, res) => {
+    const dbConnect = dbo.getDb();
+    const userQuery = {
+        email: req.body.email,
+        password: req.body.password,
+    };
+
+    dbConnect
+        .collection('users')
+        .findOne(userQuery)
+        .then(user => {
+            if(!user) return res.status(400).json('User not found');
+            bcrypt.compare(userQuery.password, user.password)
+                .then(isMatch => {
+                    if(isMatch){
+                        const payload = {
+                            user_id: user.user_id,
+                            username: user.username,
+                        };
+                        jwt.sign(payload, 'secret', {
+                            expiresIn: 3600
+                        }, (err, token) => {
+                            if(err) console.error(err);
+                            else{
+                                res.json({
+                                    success: true,
+                                    token: `Bearer ${token}`,
+                                });
+                            }
+                        });
+                    }
+                    else{
+                        return res.status(400).json('Incorrect Password');
+                    }
+                });
+        });
+});
+
+router.get('/me', passport.authenticate('jwt', {session: false}), (req, res) => {
+    return res.json({
+        user_id: req.user.user_id,
+        username: req.user.username,
+        email: req.user.email,
+    });
 });
 
 router.route('/users/update/:id').post(async (req, res) => {
