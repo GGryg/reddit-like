@@ -75,7 +75,7 @@ router.route('/users/register').post(async (req, res) => {
 router.route('users/login').post(async (req, res) => {
     const dbConnect = dbo.getDb();
     const userQuery = {
-        email: req.body.email,
+        username: req.body.username,
         password: req.body.password,
     };
 
