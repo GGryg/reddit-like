@@ -22,7 +22,7 @@ router.route('/users').get(async (req, res) => {
 
 router.route('/users/:id').get(async (req, res) => {
     const dbConnect = dbo.getDb();
-    const userQuery = {user_id: parseInt(req.params.id)};
+    const userQuery = {user_id: req.params.id};
 
     dbConnect
         .collection('users')
@@ -60,7 +60,7 @@ router.route('/users/register').post(async (req, res) => {
 
 router.route('/users/update/:id').post(async (req, res) => {
     const dbConnect = dbo.getDb();
-    const userQuery = {user_id: parseInt(req.params.id)};
+    const userQuery = {user_id: req.params.id};
     const updated = {
         $set: {
             email: req.body.email,
@@ -84,7 +84,7 @@ router.route('/users/update/:id').post(async (req, res) => {
 
 router.route('/users/delete/:id').delete((req, res) => {
     const dbConnect = dbo.getDb();
-    const userQuery = {user_id: parseInt(req.params.id)};
+    const userQuery = {user_id: req.params.id};
 
     dbConnect
         .collection("users")
@@ -94,6 +94,38 @@ router.route('/users/delete/:id').delete((req, res) => {
             }
             else{
                 console.log('Deleted 1 document');
+                res.json(result);
+            }
+        });
+});
+
+router.route('/users/email/:email').get((req, res) => {
+    const dbConnect = dbo.getDb();
+    const userQuery = {email: req.params.email};
+
+    dbConnect
+        .collection("users")
+        .findOne(userQuery, (err, result) => {
+            if(err){
+                res.status(400).send('Error fetching email');
+            }
+            else{
+                res.json(result)
+            }
+        });
+});
+
+router.route('/users/name/:username').get((req, res) => {
+    const dbConnect = dbo.getDb();
+    const userQuery = {username: req.params.username};
+
+    dbConnect
+        .collection("users")
+        .findOne(userQuery, (err, result) => {
+            if(err){
+                req.status(400).send('Error fetching username');
+            }
+            else{
                 res.json(result);
             }
         });
