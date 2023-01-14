@@ -1,9 +1,9 @@
 import { Formik, Field } from 'formik';
 import { connect } from 'react-redux';
 import { v4 } from 'uuid';
-import { registerUser } from '../actions/UsersActions';
+import { registerUser, checkEmail, checkUsername } from '../actions/UsersActions';
 
-const Register = ({registerUser}) => {
+const Register = ({registerUser, checkEmail}) => {
     const initialValues = {
         email: '',
         username: '',
@@ -15,14 +15,19 @@ const Register = ({registerUser}) => {
         const errors = {};
         if(values.email === '') errors.email = 'Email is required';
         else if(!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) errors.email = 'Invalid email';
+        else{
+            const check = checkEmail(values.email);
+            console.log(check);
+            if(check !== null) errors.email = 'Email already in use'
+        }
         if(values.username === '') errors.username = 'Username is required';
-        /*
-        *   Later add valitation for not repeating email and username
-        */
+        else{
+            const check = checkUsername(values.username);
+            if(check !== null) errors.username = 'Username already in use'
+        }
        if(values.password === '') errors.password = 'Password is required';
-       else if(!/^[a-zA-Z0-9_]{6,}$/i.test(values.password)) errors.password = 'Password needs to be at least 6 characters and only letters, numbers and _ is allowed';
+       else if(!/^[a-zA-Z0-9_]{6,}$/i.test(values.password)) errors.password = 'Password needs to be at least 6 characters and only letters, numbers or _';
        if(values.password2 !== values.password) errors.password2 = "Passwords aren't identical";
-       console.log(values.password + ' r ' + values.password2);
        return errors;
     };
 
@@ -34,12 +39,13 @@ const Register = ({registerUser}) => {
             password: values.password,
         };
         registerUser(newUser);
+        actions.resetForm();
     };
 
     return (
         <div className='bg-dark flex flex-col items-center'>
             <h2 className='text-gray-300 text-3xl my-4'>Register</h2>
-            <Formik initialValues={initialValues} validate={validate} onSubmit={handleSubmit}>
+            <Formik initialValues={initialValues} validateOnBlur={true} validateOnChange={false} validate={validate} onSubmit={handleSubmit}>
                 {(values) => (
                     <form onSubmit={values.handleSubmit} className='flex flex-col items-center'>
                         <div className='my-4'>
@@ -61,7 +67,7 @@ const Register = ({registerUser}) => {
                                 Password
                             </label><br />
                             <Field type='password' name='password' />
-                            {values.errors.password ? (<div className='text-red-400'>{values.errors.password}</div>) : null}
+                            {values.errors.password ? (<div className='text-red-400 word-all w-40'>{values.errors.password}</div>) : null}
                         </div>
                         <div className='my-4'>
                             <label className='text-gray-300 text-xl'>
@@ -83,7 +89,9 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = {
-    registerUser
+    registerUser,
+    checkEmail,
+    checkUsername,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Register);

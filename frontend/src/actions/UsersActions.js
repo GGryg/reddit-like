@@ -9,7 +9,29 @@ export const registerUser = (user) => dispatch => {
         .catch(err => {
             dispatch({
                 type: GET_ERRORS,
-                payload: err.res.data
+                payload: err.res.data,
+            });
+        });
+};
+
+export const checkEmail = (email) => dispatch => {
+    axios.get('http://localhost:4000/users/email/' + email)
+        .then(res => console.log(res))
+        .catch(err => {
+            dispatch({
+                type: GET_ERRORS,
+                payload: err.res.data,
+            });
+        });
+};
+
+export const checkUsername = (username) => dispatch => {
+    axios.get('http://localhost:4000/users/name/' + username)
+        .then(res => console.log(res))
+        .catch(err => {
+            dispatch({
+                type: GET_ERRORS,
+                payload: err.res.data,
             });
         });
 };
