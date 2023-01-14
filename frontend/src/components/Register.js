@@ -29,8 +29,8 @@ const Register = ({registerUser}) => {
     const handleSubmit = (values, actions) => {
         const newUser = {
             id: v4(),
-            email: values.username,
-            username: values.email,
+            email: values.email,
+            username: values.username,
             password: values.password,
         };
         registerUser(newUser);
