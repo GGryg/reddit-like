@@ -35,9 +35,9 @@ const Header = ({logoutUser, auth}) => {
             <button className='mx-4'>
                 <IoNotificationsOutline className='text-gray-300 h-7 w-6'/>
             </button>
-            <button className='mx-4 '>
+            <Link to='/topic/create'><button className='mx-4 '>
                 <IoAddCircleOutline className='text-gray-300 h-7 w-7' />
-            </button>
+            </button></Link>
             <button onClick={() => setDropDown(!dropDown)} className='mx-4 justify-end'>
                 <MdOutlineManageAccounts className='text-gray-300 h-7 w-7' />
             </button>
