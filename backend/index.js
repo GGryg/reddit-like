@@ -21,7 +21,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
 app.use(require('./src/routes/users'));
-app,use(require('./src/routes/posts'));
+app.use(require('./src/routes/posts'));
 
 app.listen(port, () => {
     dbo.connectToServer((err) => {
