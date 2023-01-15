@@ -22,6 +22,7 @@ app.use(cookieParser());
 
 app.use(require('./src/routes/users'));
 app.use(require('./src/routes/posts'));
+app.use(require('./src/routes/topics'));
 
 app.listen(port, () => {
     dbo.connectToServer((err) => {
