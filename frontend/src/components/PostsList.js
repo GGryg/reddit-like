@@ -3,13 +3,13 @@ import { useEffect } from "react";
 import { getPosts } from "../actions/PostsActions";
 import Post from './Post';
 
-const PostsList = ({getPosts, posts}) => {
+const PostsList = ({props ,getPosts, posts}) => {
     useEffect(() => {
-        getPosts();
+        getPosts(props.topic);
       }, [getPosts]);
     
     return <div>{posts.map(post => (
-        <Post props={post} />
+        <Post key={post._id} props={post} />
     ))}</div>
 };
 

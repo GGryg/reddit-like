@@ -4,8 +4,9 @@ import { GET_ERRORS } from "./UsersActions";
 export const GET_POSTS = 'GET_POSTS';
 export const SET_POSTS = 'SET_POSTS';
 
-export const getPosts = () => dispatch => {
-    axios.get('http://localhost:4000/posts')
+export const getPosts = (topic) => dispatch => {
+    console.log(topic);
+    axios.get(`http://localhost:4000/posts/${topic}`)
         .then((posts) => {
             dispatch(setPosts(posts.data));
         })

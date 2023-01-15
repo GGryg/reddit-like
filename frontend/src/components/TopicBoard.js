@@ -25,7 +25,7 @@ const TopicBoard = ({loading, topics, getTopics}) => {
                 <TopicHeader props={current.topic} />
                 <div className='bg-dark px-40 py-3 h-screen'>
                     <PostForm />
-                    <PostsList />
+                    <PostsList props={current.topic} />
                 </div>
             </div>
         )}

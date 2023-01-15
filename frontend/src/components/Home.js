@@ -8,7 +8,7 @@ const Home = () => {
                 <h1 className='text-gray-200 text-5xl'>Home</h1>
             </div>
             <div className='bg-dark px-40 py-3 h-screen'>
-                <PostsList />
+                <PostsList props={{topic: ''}} />
             </div>
         </div>)
 };
