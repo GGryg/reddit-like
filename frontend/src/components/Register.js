@@ -64,7 +64,7 @@ const Register = ({registerUser}) => {
     };
 
     return (
-        <div className='bg-dark flex flex-col items-center'>
+        <div className='bg-dark h-screen flex flex-col items-center'>
             <h2 className='text-gray-300 text-3xl my-4'>Register</h2>
             <Formik initialValues={initialValues} validateOnBlur={true} validateOnChange={false} validationSchema={RegisterSchema} onSubmit={handleSubmit}>
                 {({ errors }) => (

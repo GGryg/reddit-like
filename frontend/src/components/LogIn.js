@@ -25,7 +25,7 @@ const LogIn = ({loginUser, errorsA}) => {
     }
 
     return (
-        <div className='bg-dark flex flex-col items-center'>
+        <div className='bg-dark h-screen flex flex-col items-center'>
             <h2 className='text-gray-300 text-3xl my-4'>Log In</h2>
             <Formik initialValues={initialValues} validateOnBlur={true} validateOnChange={false} validate={validate} onSubmit={handleSubmit}>
                 {(values) => (
