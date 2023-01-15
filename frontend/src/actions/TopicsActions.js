@@ -28,4 +28,15 @@ export const getTopics = () => dispatch => {
 export const setTopics = (topics) => ({
     type: SET_TOPICS,
     topics
-})
+});
+
+export const createTopic = (topic) => dispatch => {
+    axios.post('http://localhost:4000/topics/create')
+        .then(() => null)
+        .catch((err) => {
+            dispatch({
+                type: GET_ERRORS,
+                errors: err.response.data,
+            });
+        });
+};

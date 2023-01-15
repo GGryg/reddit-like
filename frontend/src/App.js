@@ -5,6 +5,7 @@ import Home from './components/Home';
 import LogIn from './components/LogIn';
 import Register from './components/Register';
 import TopicBoard from './components/TopicBoard';
+import TopicForm from './components/TopicForm';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
       <Route path='/login' element={<LogIn />} />
       <Route path='/register' element={<Register />} />
       <Route path='/topic/:topic' element={<TopicBoard />} />
+      <Route path='/topic/create' element={<TopicForm />} />
     </Routes>
     </BrowserRouter>
   );
