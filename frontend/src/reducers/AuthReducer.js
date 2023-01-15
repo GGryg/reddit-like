@@ -1,4 +1,5 @@
 import { SET_CURRENT_USER } from "../actions/UsersActions";
+import isEmpty from "../utils/isEmpty";
 
 const initialState = {
     isAuthenticated: false,
@@ -10,7 +11,7 @@ const AuthReducer = (state=initialState, action) => {
         case SET_CURRENT_USER:
             return {
                 ...state,
-                isAuthenticated: action.payload === {},
+                isAuthenticated: !isEmpty(action.payload),
                 user: action.payload,
             };
         default:

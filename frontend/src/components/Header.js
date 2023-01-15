@@ -6,14 +6,17 @@ import { MdOutlineManageAccounts } from 'react-icons/md'
 import { Link } from 'react-router-dom';
 import { useState, useRef } from 'react';
 import UseOnClickOutside from '../hooks/UseOnClickOutside';
+import { connect } from 'react-redux';
 
-const Header = () => {
+import { logoutUser } from './../actions/UsersActions';
+
+const Header = ({logoutUser, auth}) => {
+    const { isAuthenticated, user } = auth;
+
     const ref = useRef();
     const [dropDown, setDropDown] = useState(false);
 
     UseOnClickOutside(ref, () => setDropDown(false));
-
-    const isLogged = true;
 
     return (
     <header className="bg-dark w-full p-3 flex justify-between">
@@ -24,7 +27,7 @@ const Header = () => {
             <TfiSearch className='text-gray-300 h-6 w-6'/>
             <input type='text' className='bg-gray-700 h-6 w-128 p-2 focus:outline-none text-white' placeholder='search' />
         </form>
-        { isLogged ? (<div>
+        { isAuthenticated ? (<div>
             <button className='mx-4'>
                 <BsChatDots className='text-gray-300 h-6 w-6'/>
             </button>
@@ -39,7 +42,7 @@ const Header = () => {
             </button>
             {dropDown ? (<div className={"absolute w-20 right-7 top-10 bg-dark border border-gray-700 z-10 rounded-md text-gray-300 overflow-hidden "+dropDown}>
                 <button className='text-gray-300 block flex w-50 py-2 px-3 hover:bg-gray-300 hover:text-black'>Settings</button>
-                <button className='text-gray-300 w-full block flex w-50 py-2 px-3 hover:bg-gray-300 hover:text-black'>Logout</button> </div>) : null}
+                <button onClick={() => logoutUser()} className='text-gray-300 w-full block flex w-50 py-2 px-3 hover:bg-gray-300 hover:text-black'>Logout</button> </div>) : null}
 
         </div>) : (
                 <div>
@@ -51,4 +54,13 @@ const Header = () => {
   )
 }
 
-export default Header;
+const mapStateToProps = (state) => ({
+    errors: state.errors,
+    auth: state.auth,
+});
+
+const mapDispatchToProps = {
+    logoutUser,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

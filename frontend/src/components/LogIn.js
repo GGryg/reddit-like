@@ -2,13 +2,13 @@ import { Formik, Field } from 'formik';
 import { connect } from 'react-redux';
 
 import { loginUser } from './../actions/UsersActions';
+import isEmpty from './../utils/isEmpty';
 
-const LogIn = () => {
+const LogIn = ({loginUser, errorsA}) => {
     const initialValues = {
         username: '',
         password: '',
     };
-
     const validate = (values) => {
         const errors = {};
         if(values.username === '') errors.username = 'Username is required';
@@ -16,7 +16,6 @@ const LogIn = () => {
 
         return errors;
     }
-
     const handleSubmit = (values, actions) => {
         const user = {
             username: values.username,
@@ -29,7 +28,7 @@ const LogIn = () => {
     return (
         <div className='bg-dark flex flex-col items-center'>
             <h2 className='text-gray-300 text-3xl my-4'>Log In</h2>
-            <Formik initialValues={initialValues} validate={validate} onSubmit={handleSubmit}>
+            <Formik initialValues={initialValues} validateOnBlur={true} validateOnChange={false} validate={validate} onSubmit={handleSubmit}>
                 {(values) => (
                     <form onSubmit={values.handleSubmit} className='flex flex-col items-center'>
                         <div className='my-4'>
@@ -47,6 +46,7 @@ const LogIn = () => {
                             {values.errors.password ? (<div className='text-red-400'>{values.errors.password}</div>) : null}
                         </div>
                         <button type='submit' className='bg-gray-700 text-gray-300 my-4 px-3 py-1 rounded-lg'>Log In</button>
+                        
                     </form>
                 )}
             </Formik>
@@ -55,7 +55,7 @@ const LogIn = () => {
 }
 
 const mapStateToProps = state => ({
-    errors: state.errors
+    errorsA: state.errors
 });
 
 const mapDispatchToProps = {

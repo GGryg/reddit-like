@@ -7,33 +7,11 @@ export const SET_CURRENT_USER = 'SET_CURRENT_USER';
 
 export const registerUser = (user) => dispatch => {
     axios.post('http://localhost:4000/users/register', user)
-        .then(res => console.log(res.data))
+        .then(res => null)
         .catch(err => {
             dispatch({
                 type: GET_ERRORS,
-                payload: err.res.data,
-            });
-        });
-};
-
-export const checkEmail = (email) => dispatch => {
-    axios.get('http://localhost:4000/users/email/' + email)
-        .then(res => console.log(res.data))
-        .catch(err => {
-            dispatch({
-                type: GET_ERRORS,
-                payload: err.res.data,
-            });
-        });
-};
-
-export const checkUsername = (username) => dispatch => {
-    axios.get('http://localhost:4000/users/name/' + username)
-        .then(res => console.log(res.data))
-        .catch(err => {
-            dispatch({
-                type: GET_ERRORS,
-                payload: err.res.data,
+                payload: err.response.data,
             });
         });
 };
@@ -45,12 +23,13 @@ export const loginUser = (user) => dispatch => {
             localStorage.setItem('jwtToken', token);
             setAuthToken(token);
             const decoded = jwt_decode(token);
+            console.log(decoded);
             dispatch(setCurrentUser(decoded));
         })
         .catch(err => {
             dispatch({
                 type: GET_ERRORS,
-                payload: err.res.data
+                payload: err.response.data
             });
         });
 };
@@ -66,4 +45,4 @@ export const logoutUser = () => dispatch => {
     localStorage.removeItem('jwtToken');
     setAuthToken(false);
     dispatch(setCurrentUser({}));
-}
+};
