@@ -40,43 +40,47 @@ router.route('/users/:id').get(async (req, res) => {
 
 router.route('/users/register').post(async (req, res) => {
     const dbConnect = dbo.getDb();
-    const userQuery = {
+    let userQuery = {
         user_id: req.body.id,
         email: req.body.email,
         username: req.body.username,
         password: req.body.password
     };
 
-    bcrypt.genSalt(10, (err, salt) => {
+    try{
+        await bcrypt.genSalt(10, (err, salt) => {
         if(err) console.error(err);
         else{
             bcrypt.hash(userQuery.password, salt, (err, hash) => {
                 if(err) console.error(err);
                 else{
                     userQuery.password = hash;
+                    dbConnect
+                    .collection("users")
+                    .insertOne(userQuery, (err, result) => {
+                        if(err){
+                            res.status(400).send("Error inserting");
+                        }
+                        else{
+                            console.log('Added a new user id', result.insertedId);
+                            res.status(204).send();
+                        }
+                    });
                 }
             });
         }
-    });
-
-    dbConnect
-        .collection("users")
-        .insertOne(userQuery, (err, result) => {
-            if(err){
-                res.status(400).send("Error inserting");
-            }
-            else{
-                console.log('Added a new user id', result.insertedId);
-                res.status(204).send();
-            }
         });
+    }
+    catch(err){
+        console.error(err);
+    }
+
 });
 
-router.route('users/login').post(async (req, res) => {
+router.route('/users/login').post(async (req, res) => {
     const dbConnect = dbo.getDb();
     const userQuery = {
         username: req.body.username,
-        password: req.body.password,
     };
 
     dbConnect
@@ -84,7 +88,7 @@ router.route('users/login').post(async (req, res) => {
         .findOne(userQuery)
         .then(user => {
             if(!user) return res.status(400).json('User not found');
-            bcrypt.compare(userQuery.password, user.password)
+            bcrypt.compare(req.body.password, user.password)
                 .then(isMatch => {
                     if(isMatch){
                         const payload = {
@@ -170,7 +174,8 @@ router.route('/users/email/:email').get((req, res) => {
                 res.status(400).send('Error fetching email');
             }
             else{
-                res.json(result)
+                if(result) return res.json(true);
+                else return res.json(false);
             }
         });
 });
@@ -186,7 +191,8 @@ router.route('/users/name/:username').get((req, res) => {
                 req.status(400).send('Error fetching username');
             }
             else{
-                res.json(result);
+                if(result) return res.json(true);
+                return res.json(false);
             }
         });
 });

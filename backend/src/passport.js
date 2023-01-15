@@ -13,7 +13,7 @@ module.exports = passport => {
         const dbConnect = dbo.getDb();
         dbConnect
             .collection('users')
-            .findById(payload.id)
+            .findOne({user_id: payload.user_id})
             .then(user => {
                 if (user){
                     return done(null, user);
