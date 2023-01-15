@@ -2,11 +2,20 @@ import axios from "axios";
 import { GET_ERRORS } from "./UsersActions";
 
 export const SET_TOPICS = 'SET_TOPICS';
+export const LOAD_TOPICS = 'LOAD_TOPICS';
 
 export const getTopics = () => dispatch => {
+    dispatch({
+        type: LOAD_TOPICS,
+        loading: true,
+    })
     axios.get('http://localhost:4000/topics')
         .then((topics) => {
             dispatch(setTopics(topics.data));
+            dispatch({
+                type: LOAD_TOPICS,
+                loading: false,
+            });
         })
         .catch(err => {
             dispatch({
