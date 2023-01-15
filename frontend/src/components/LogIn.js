@@ -2,7 +2,6 @@ import { Formik, Field } from 'formik';
 import { connect } from 'react-redux';
 
 import { loginUser } from './../actions/UsersActions';
-import isEmpty from './../utils/isEmpty';
 
 const LogIn = ({loginUser, errorsA}) => {
     const initialValues = {

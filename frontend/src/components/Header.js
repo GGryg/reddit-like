@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import { logoutUser } from './../actions/UsersActions';
 
 const Header = ({logoutUser, auth}) => {
-    const { isAuthenticated, user } = auth;
+    const { isAuthenticated } = auth;
 
     const ref = useRef();
     const [dropDown, setDropDown] = useState(false);

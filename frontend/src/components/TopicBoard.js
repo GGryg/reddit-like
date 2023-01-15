@@ -1,5 +1,5 @@
-import Post from './Post';
 import PostForm from './PostForm';
+import PostsList from './PostsList';
 import TopicHeader from './TopicHeader';
 
 const TopicBoard = () => {
@@ -8,9 +8,7 @@ const TopicBoard = () => {
             <TopicHeader />
             <div className='bg-dark px-40 py-3 h-screen'>
                 <PostForm />
-                <Post />
-                <Post />
-                <Post />
+                <PostsList />
             </div>
         </>
     )
