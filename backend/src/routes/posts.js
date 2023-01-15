@@ -19,4 +19,25 @@ router.route('/posts').get((req, res) => {
         });
 });
 
+router.route('/posts/:topic').get((req, res) => {
+    dbConnect = dbo.getDb();
+    const { topic } = req.params;
+    const topicQuery = {};
+    if(topic !== ''){
+        topicQuery.topic = topic;
+    }
+
+    dbConnect
+        .collection('posts')
+        .find(topicQuery)
+        .toArray((err, result) => {
+            if(err){
+                res.status(400).send('Error fetching posts');
+            }
+            else{
+                res.json(result);
+            }
+        });
+});
+
 module.exports = router;
