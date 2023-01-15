@@ -20,9 +20,10 @@ const Header = ({logoutUser, auth}) => {
 
     return (
     <header className="bg-dark w-full p-3 flex justify-between">
-        <div className='mx-4'>
+         <Link to='/'><div className='mx-4 flex items-center'>
             <img src={Logo} alt="logo" className='w-8 h-8'></img>
-        </div>
+            <h1 className='text-gray-300 text-xl mx-3'>Home</h1>
+        </div></Link>
         <form action='' className='bg-gray-700 p-1 h-8 rounded-lg flex'>
             <TfiSearch className='text-gray-300 h-6 w-6'/>
             <input type='text' className='bg-gray-700 h-6 w-128 p-2 focus:outline-none text-white' placeholder='search' />
