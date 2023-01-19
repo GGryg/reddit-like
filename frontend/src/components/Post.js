@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 
 const Post = ({props}) => {
-    console.log(props);
     return (
         <>
             <Link to={`/topic/${props.topic}/post/${props._id}`}><div className='border-gray-600 border-2 my-4 rounded-md w-256'>
