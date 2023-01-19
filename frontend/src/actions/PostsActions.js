@@ -3,12 +3,20 @@ import { GET_ERRORS } from "./UsersActions";
 
 export const GET_POSTS = 'GET_POSTS';
 export const SET_POSTS = 'SET_POSTS';
+export const LOAD_POSTS = 'LOAD_POSTS';
 
 export const getPosts = (topic) => dispatch => {
-    console.log(topic);
+    dispatch({
+        type: LOAD_POSTS,
+        loading: true,
+    });
     axios.get(`http://localhost:4000/posts/${topic}`)
         .then((posts) => {
             dispatch(setPosts(posts.data));
+            dispatch({
+                type: LOAD_POSTS,
+                loading: false,
+            });
         })
         .catch((err) => {
             dispatch({

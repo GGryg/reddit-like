@@ -7,6 +7,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Register from './components/Register';
 import TopicBoard from './components/TopicBoard';
 import TopicForm from './components/TopicForm';
+import PostDetails from './components/PostDetails';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <TopicForm />
         </ProtectedRoute>
         } />
+      <Route path='/topic/:topic/post/:id' element={<PostDetails />} />
     </Routes>
     </BrowserRouter>
   );

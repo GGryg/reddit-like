@@ -35,7 +35,7 @@ const TopicBoard = ({loading, topics, getTopics}) => {
 }
 
 const mapStateToProps = (state) => ({
-    loading: state.loading,
+    loading: state.loading.topic,
     topics: state.topics,
 });
 

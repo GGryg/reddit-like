@@ -3,18 +3,19 @@ import { useEffect } from "react";
 import { getPosts } from "../actions/PostsActions";
 import Post from './Post';
 
-const PostsList = ({props ,getPosts, posts}) => {
+const PostsList = ({props ,getPosts, posts, loading}) => {
     useEffect(() => {
         getPosts(props.topic);
       }, [getPosts, props.topic]);
     
-    return <div>{posts.map(post => (
+    return <div>{ loading ? "loading" : posts.map(post => (
         <Post key={post._id} props={post} />
     ))}</div>
 };
 
 const mapStateToProps = (state) => ({
-    posts: state.posts
+    posts: state.posts,
+    loading: state.loading.posts,
 });
 
 const mapDispatchToProps = {
