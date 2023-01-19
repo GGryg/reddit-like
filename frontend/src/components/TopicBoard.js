@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import PostForm from './PostForm';
 import PostsList from './PostsList';
 import TopicHeader from './TopicHeader';
-import { useParams, Navigate } from 'react-router-dom';
+import { useParams, Navigate, Outlet } from 'react-router-dom';
 import { getTopics } from './../actions/TopicsActions';
 import { useEffect } from 'react';
 
@@ -25,7 +25,8 @@ const TopicBoard = ({loading, topics, getTopics}) => {
                 <TopicHeader props={current.topic} />
                 <div className='bg-dark px-40 py-3 h-screen'>
                     <PostForm />
-                    <PostsList props={current.topic} />
+                    
+                    <Outlet context={[current.topic.topic]}/>
                 </div>
             </div>
         )}

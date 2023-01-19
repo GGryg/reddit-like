@@ -13,9 +13,9 @@ const PostDetails = ({getPosts, posts, loading}) => {
     if(!loading){
         current.post = posts.find((p) => p._id === id);
     }
-    console.log(current.post)
+
     return (
-        <div className='bg-dark px-40 py-3 h-screen'>
+        <div className='bg-dark py-3 h-screen'>
             {loading ? "loading" : (
                 <div>
             <div className='border-gray-600 border-2 my-4 rounded-md w-[70rem] min-h-[15rem] flex'>
