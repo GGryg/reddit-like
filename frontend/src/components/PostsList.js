@@ -6,7 +6,7 @@ import Post from './Post';
 const PostsList = ({props ,getPosts, posts}) => {
     useEffect(() => {
         getPosts(props.topic);
-      }, [getPosts]);
+      }, [getPosts, props.topic]);
     
     return <div>{posts.map(post => (
         <Post key={post._id} props={post} />
