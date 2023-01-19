@@ -1,6 +1,5 @@
 import { connect } from 'react-redux';
 import PostForm from './PostForm';
-import PostsList from './PostsList';
 import TopicHeader from './TopicHeader';
 import { useParams, Navigate, Outlet } from 'react-router-dom';
 import { getTopics } from './../actions/TopicsActions';
@@ -17,7 +16,7 @@ const TopicBoard = ({loading, topics, getTopics}) => {
     if(!loading){
         current.topic = topics.find((t) => t.topic === topic);
     }
-    
+
     return (
         <>{loading ? <div>loading</div> : (
             !current.topic ? <Navigate to='/' replace={true} /> :
