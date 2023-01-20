@@ -42,8 +42,8 @@ const Header = ({logoutUser, auth}) => {
                 <MdOutlineManageAccounts className='text-gray-300 h-7 w-7' />
             </button>
             {dropDown ? (<div className={"absolute w-20 right-7 top-10 bg-dark border border-gray-700 z-10 rounded-md text-gray-300 overflow-hidden "+dropDown}>
-                <button className='text-gray-300 block flex w-50 py-2 px-3 hover:bg-gray-300 hover:text-black'>Settings</button>
-                <button onClick={() => logoutUser()} className='text-gray-300 w-full block flex w-50 py-2 px-3 hover:bg-gray-300 hover:text-black'>Logout</button> </div>) : null}
+                <button className='text-gray-300 flex w-50 py-2 px-3 hover:bg-gray-300 hover:text-black'>Settings</button>
+                <button onClick={() => logoutUser()} className='text-gray-300 w-full flex w-50 py-2 px-3 hover:bg-gray-300 hover:text-black'>Logout</button> </div>) : null}
 
         </div>) : (
                 <div>

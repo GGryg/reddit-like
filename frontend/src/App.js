@@ -28,7 +28,6 @@ function App() {
           <TopicForm />
         </ProtectedRoute>
         } />
-      
     </Routes>
     </BrowserRouter>
   );
