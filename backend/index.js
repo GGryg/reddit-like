@@ -1,32 +1,44 @@
-"use strict";
-
 const express = require('express');
+const dotenv = require('dotenv');
 const cors = require('cors');
+const morgan = require('morgan');
+const { default: mongoose } = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const passport = require('passport');
-const dotenv = require('dotenv');
-dotenv.config({path: './.env'});
-
-const dbo = require('./src/db/conn');
+dotenv.config({path: '.env'});
 
 const app = express();
-const port = 4000;
+const PORT = process.env.PORT;
 
-app.use(passport.initialize());
-require('./src/passport')(passport);
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(morgan('common'));
 app.use(cookieParser());
 
-app.use(require('./src/routes/users'));
-app.use(require('./src/routes/posts'));
-app.use(require('./src/routes/topics'));
+const users = require('./src/routes/users');
+const auth = require('./src/routes/auth');
+const topics = require('./src/routes/topics');
+const posts = require('./src/routes/posts');
 
-app.listen(port, () => {
-    dbo.connectToServer((err) => {
-        if (err) console.error(err);
-    });
-    console.log('server is running on port', port);
+app.use('/api/users', users);
+app.use('/api/', auth);
+app.use('/api/topics', topics);
+app.use('/api/posts', posts);
+
+const connectDB = async () =>{
+    try{
+        mongoose.set("strictQuery", false);
+        await mongoose.connect(process.env.MONGO_URI);
+        console.log('Successfully connected to MongoDB');
+    }
+    catch (err) {
+        console.error(err);
+        process.exit(1);
+    }
+}
+
+app.listen(PORT, () => {
+    connectDB();
+    console.log('Server is running on port', PORT);
 });
