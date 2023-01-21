@@ -27,6 +27,10 @@ const PostSchema = new Schema({
         type: String,
         required: true,
     },
+    upvotes: {
+        type: Number,
+        default: 0,
+    }
 }, { timestamps: true });
 
 const Post = mongoose.model("Post", PostSchema);

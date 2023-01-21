@@ -21,6 +21,10 @@ const CommentSchema = new Schema({
         ref: 'User',
         required: true,
     },
+    upvotes: {
+        type: Number,
+        default: 0,
+    }
 }, { timestamps: true });
 
 const Comment = mongoose.model("Comment", CommentSchema);
