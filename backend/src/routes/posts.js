@@ -1,43 +1,13 @@
 const express = require('express');
+const postController = require('../controllers/postController');
+const checkAuth = require('../utils/checkAuth');
 const router = express.Router();
 
-const dbo = require('./../db/conn');
-
-router.route('/posts').get((req, res) => {
-    const dbConnect = dbo.getDb();
-
-    dbConnect
-        .collection("posts")
-        .find({})
-        .toArray((err, result) => {
-            if (err){
-                res.status(400).send("Error fetching posts");
-            }
-            else{
-                res.json(result);
-            }
-        });
-});
-
-router.route('/posts/:topic').get((req, res) => {
-    dbConnect = dbo.getDb();
-    const { topic } = req.params;
-    const topicQuery = {};
-    if(topic !== ''){
-        topicQuery.topic = topic;
-    }
-
-    dbConnect
-        .collection('posts')
-        .find(topicQuery)
-        .toArray((err, result) => {
-            if(err){
-                res.status(400).send('Error fetching posts');
-            }
-            else{
-                res.json(result);
-            }
-        });
-});
+router.get('/', postController.getPosts);
+router.get('/:id', postController.getPost);
+router.get('/current', checkAuth, postController.getCurrentPosts);
+router.post('/', checkAuth, postController.createPost);
+router.put('/:id', checkAuth, postController.updatePost);
+router.delete('/:id', checkAuth, postController.deletePost);
 
 module.exports = router;

@@ -21,7 +21,7 @@ const Home = ({loading, topics, getTopics }) => {
                 <h1 className='text-gray-200 py-3 text-5xl'>Home</h1>
                 {loading ? "loading" : 
                 <select className='bg-gray-700 text-gray-300 h-[60px] rounded-md' onChange={handleChange}>
-                    <option selected>Choose topic</option>
+                    <option>Choose topic</option>
                     {topics.map(topic => (
                         <option key={topic._id} value={topic.topic}>{topic.topic}</option>
                     ))}
