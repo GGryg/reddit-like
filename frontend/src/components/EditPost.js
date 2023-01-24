@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import * as Yup from 'yup';
 
 
-const EditComment = () => {
+const EditPost = () => {
 
     const { postId, topic } = useParams();
     const navigate = useNavigate();
@@ -21,33 +21,44 @@ const EditComment = () => {
     if(post === null) return <div>Loading</div> 
 
     const initialValues = {
+        title: '',
         content: '',
         links: '',
+        picture: '',
     };
 
-    const commentSchema = Yup.object().shape({
-        content: Yup.string()
-            .required('required'),
+    const postSchema = Yup.object().shape({
+        title: Yup.string()
+            .min(1, 'Too short')
+            .max(200, 'Too long'),
+        content: Yup.string(),
         links: Yup.string(),
     });
 
     const handleEdit = async (values) => {
-        const editComment = {
+        const editPost = {
+            title: values.title,
             content: values.content,
             links: values.content,
+            picture: values.picture,
         };
-        let eComment = new FormData();
-
+        let ePost = new FormData();
+        if(values.title){
+          ePost.append('title', editPost.title);  
+        }
         if(values.content){
             ePost.append('content', editPost.content);
         }
         if(values.links){
             ePost.append('links', editPost.links);
         }
+        if(values.picture){
+            ePost.append('picture', editPost.picture);
+        }
         console.log(ePost);
-        if(editComment!=={}){
+        if(editPost!=={}){
             try{
-                await axios.put(`http://localhost:4000/api/comments/${commentId}`, eComment, {withCredentials: true});
+                await axios.put(`http://localhost:4000/api/posts/${postId}`, ePost, {withCredentials: true});
                 navigate(`/t/${topic}/post/${postId}`);
             }
             catch(err){
@@ -57,14 +68,21 @@ const EditComment = () => {
     };
 
     return <div>
-        <Formik initialValues={initialValues} validateOnBlur={true} validateOnChange={false} validationSchema={commentSchema} onSubmit={handleEdit}>
-            {({errors}) => (
+        <Formik initialValues={initialValues} validateOnBlur={true} validateOnChange={false} validationSchema={postSchema} onSubmit={handleEdit}>
+            {({errors, setFieldValue}) => (
             <Form className='flex flex-col items-center'>
+                <div className='my-4'>
+                    <label className='text-gray-300 text-xl'>
+                        Title
+                    </label><br />
+                    <Field name='title' className='w-[400px]'/>
+                    {errors.title ? (<div className='text-red-400'>{errors.title}</div>) : null}
+                </div>
                 <div className='my-4'>
                     <label className='text-gray-300 tex t-xl'>
                         Content
                     </label><br />
-                    <Field as='textarea' name='content' className='w-[700px] h-[200px] p-2 rounded-lg bg-search-default text-cText-light'/>
+                    <Field as='textarea' name='content' className='w-[600px] h-[300px]'/>
                     {errors.content ? (<div className='text-red-400'>{errors.content}</div>) : null}
                 </div>
                 <div className='my-4'>
@@ -74,11 +92,17 @@ const EditComment = () => {
                     <Field type='text' name='links'/>
                     {errors.links ? (<div className='text-red-400'>{errors.links}</div>) : null}
                 </div>
-                <button type='submit' className='py-1 px-4 text-cText-gray font-semibold bg-button-light rounded-2xl'>Edit comment</button>
+                <div className='my-4'>
+                    <label className='text-gray-300 text-xl'>
+                        Picture
+                    </label><br />
+                    <input type='file' name='picture' accept='image/*' onBlur={(e)=>setFieldValue("picture", e.target.files[0])} />
+                </div>
+                <button type='submit' className='py-1 px-4 text-cText-gray font-semibold bg-button-light rounded-2xl'>Edit post</button>
             </Form>
             )}
         </Formik>
     </div>
 };
 
-export default EditComment;
+export default EditPost;

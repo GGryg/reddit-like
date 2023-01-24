@@ -1,13 +1,23 @@
 import axios from 'axios';
-import { connect } from 'react-redux';
 import * as Yup from 'yup';
-import { createTopic } from '../actions/TopicsActions';
 import { Formik, Field, Form } from 'formik';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from '../reducers/authSlice';
 
-const TopicForm = ({createTopic}) => {
+const TopicForm = () => {
+
+    const navigate = useNavigate();
+
+    const auth = useSelector(selectCurrentUser);
+    if(auth.user.role !== 'admin'){
+        navigate('/t/Home');
+    }
+
     const initialValues = {
         topic: '',
         description: '',
+        picture: '',
     };
 
     const topicSchema = Yup.object().shape({
@@ -17,9 +27,9 @@ const TopicForm = ({createTopic}) => {
             .required('required')
             .test('Unique topic', 'This topic already exists', (value) => {
                 return new Promise((res, rej) => {
-                    axios.get(`http://localhost:4000/topics/${value}`)
+                    axios.get(`http://localhost:4000/api/topics/?filter[topic]=${value}`)
                         .then((t) => {
-                            if(t.data !== null){
+                            if(t.data.length !== 0){
                                 res(false);
                             }
                             else{
@@ -31,26 +41,37 @@ const TopicForm = ({createTopic}) => {
                         });
                 });
             }),
-        desc: Yup.string()
+        description: Yup.string()
             .min(2, 'Too short')
             .max(200, 'Too long')
             .required('required')
     });
 
-    const handleSubmit = (values, actions) => {
+    const handleSubmit = async (values, actions) => {
         const newTopic = {
-            topic: values.topic,
-            desc: values.desc,
+            name: values.topic,
+            description: values.description,
         };
-        createTopic(newTopic);
-        actions.resetForm();
+        if(values.picture)
+            newTopic.picture = values.picture;
+        let data = new FormData();
+        data.append('name', newTopic.topic);
+        data.append('description', newTopic.description);
+        if(newTopic.picture) data.append('picture', newTopic.picture);
+        try{
+            await axios.post('http://localhost:4000/api/topics', data, {withCredentials: true});
+            navigate(`/t/${newTopic.name}`)
+        }
+        catch(err) {
+            console.error(err);
+        }
     };
 
     return (
         <div className='bg-dark flex h-screen flex-col items-center'>
-            <h2 className='text-gray-300 text-3xl my-4'>Create a topic</h2>
+            <h2 className='text-gray-300 text-3xl my-4 font-semibold'>Create a topic</h2>
             <Formik initialValues={initialValues} validateOnBlur={true} validateOnChange={false} validationSchema={topicSchema} onSubmit={handleSubmit}>
-                {({ errors }) => (
+                {({ errors, setFieldValue }) => (
                     <Form  className='flex flex-col items-center'>
                         <div className='my-4'>
                             <label className='text-gray-300 text-xl'>
@@ -63,10 +84,16 @@ const TopicForm = ({createTopic}) => {
                             <label className='text-gray-300 text-xl'>
                                 Description
                             </label><br />
-                            <Field name='desc' />
+                            <Field name='description' />
                             {errors.desc ? (<div className='text-red-400'>{errors.desc}</div>) : null}
                         </div>
-                        <button type='submit' className='bg-gray-700 text-gray-300 my-4 px-3 py-1 rounded-lg'>Create a topic</button>
+                        <div className='my-4'>
+                            <label className='text-gray-300 text-xl'>
+                                Picture
+                            </label><br />
+                            <input type='file' name='picture' accept='image/*' onBlur={(e)=>setFieldValue("picture", e.target.files[0])} />
+                        </div>
+                        <button type='submit' className='py-1 px-4 text-cText-gray font-semibold bg-button-light rounded-2xl'>Create a topic</button>
                     </Form>
                 )}
             </Formik>
@@ -74,12 +101,4 @@ const TopicForm = ({createTopic}) => {
     );
 };
 
-const mapStateToProps = (state) => ({
-    state: state,
-});
-
-const mapDispatchToProps = {
-    createTopic,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(TopicForm);
+export default TopicForm;

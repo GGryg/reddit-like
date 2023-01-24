@@ -1,13 +1,15 @@
-import { createStore, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk';
-import RootReducer from './reducers/RootReducer';
+import { configureStore } from '@reduxjs/toolkit';
+import { setupListeners } from '@reduxjs/toolkit/query';
+import { apiSlice } from './reducers/apiSlice';
+import authReducer from './reducers/authSlice';
 
-const initialState = {};
+export const store = configureStore({
+  reducer: {
+    [apiSlice.reducerPath]: apiSlice.reducer,
+    auth: authReducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(apiSlice.middleware),
+});
 
-const Store = createStore(
-    RootReducer,
-    initialState,
-    applyMiddleware(thunk)
-);
-
-export default Store;
+setupListeners(store.dispatch);

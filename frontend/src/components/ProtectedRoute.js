@@ -1,17 +1,15 @@
-import { connect } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
-const ProtectedRoute = ({auth ,children}) => {
-    const { isAuthenticated } = auth;
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../reducers/authSlice";
+
+const ProtectedRoute = ({children}) => {
+    const auth = useSelector(selectCurrentUser);
     
-    if(!isAuthenticated){
+    if(!auth.isAuthenticated){
         return <Navigate to='/login' replace />
     }
     
     return children ? children : <Outlet />
 };
 
-const mapStateToProps = (state) => ({
-    auth: state.auth,
-});
-
-export default connect(mapStateToProps)(ProtectedRoute);
+export default ProtectedRoute;

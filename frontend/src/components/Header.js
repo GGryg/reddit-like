@@ -1,67 +1,38 @@
-import Logo from './../logo.png';
-import { TfiSearch } from 'react-icons/tfi';
-import { BsChatDots } from 'react-icons/bs'
-import { IoNotificationsOutline, IoAddCircleOutline } from 'react-icons/io5'
-import { MdOutlineManageAccounts } from 'react-icons/md'
-import { Link } from 'react-router-dom';
-import { useState, useRef } from 'react';
-import UseOnClickOutside from '../hooks/UseOnClickOutside';
-import { connect } from 'react-redux';
+import axios from "axios";
+import { useLayoutEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
-import { logoutUser } from './../actions/UsersActions';
+const Header = ({props}) => {
+    const [loading, setLoading] = useState(true);
+    const [topics, setTopics] = useState([]);
 
-const Header = ({logoutUser, auth}) => {
-    const { isAuthenticated } = auth;
+    useLayoutEffect(() => {
+        axios.get('http://localhost:4000/api/topics')
+            .then((res) => {
+                setTopics(res.data)
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    }, [])
 
-    const ref = useRef();
-    const [dropDown, setDropDown] = useState(false);
+    if(loading) return <div>Loading</div>
 
-    UseOnClickOutside(ref, () => setDropDown(false));
-
+    const topic = topics.find(t => t.name === props);
     return (
-    <header className="bg-dark w-full p-3 flex justify-between">
-         <Link to='/'><div className='mx-4 flex items-center'>
-            <img src={Logo} alt="logo" className='w-8 h-8'></img>
-            <h1 className='text-gray-300 text-xl mx-3'>Home</h1>
-        </div></Link>
-        <form action='' className='bg-gray-700 p-1 h-8 rounded-lg flex'>
-            <TfiSearch className='text-gray-300 h-6 w-6'/>
-            <input type='text' className='bg-gray-700 h-6 w-128 p-2 focus:outline-none text-white' placeholder='search' />
-        </form>
-        { isAuthenticated ? (<div>
-            <button className='mx-4'>
-                <BsChatDots className='text-gray-300 h-6 w-6'/>
-            </button>
-            <button className='mx-4'>
-                <IoNotificationsOutline className='text-gray-300 h-7 w-6'/>
-            </button>
-            <Link to='/topic/create'><button className='mx-4 '>
-                <IoAddCircleOutline className='text-gray-300 h-7 w-7' />
-            </button></Link>
-            <button onClick={() => setDropDown(!dropDown)} className='mx-4 justify-end'>
-                <MdOutlineManageAccounts className='text-gray-300 h-7 w-7' />
-            </button>
-            {dropDown ? (<div className={"absolute w-20 right-7 top-10 bg-dark border border-gray-700 z-10 rounded-md text-gray-300 overflow-hidden "+dropDown}>
-                <button className='text-gray-300 flex w-50 py-2 px-3 hover:bg-gray-300 hover:text-black'>Settings</button>
-                <button onClick={() => logoutUser()} className='text-gray-300 w-full flex w-50 py-2 px-3 hover:bg-gray-300 hover:text-black'>Logout</button> </div>) : null}
-
-        </div>) : (
-                <div>
-                    <Link to='/login'><button className='py-1 px-3 text-gray-300 bg-gray-700 rounded-lg'>Log In</button></Link>
-                    <Link to='/register'><button className='py-1 px-3 text-gray-300 mx-7 bg-gray-700 rounded-lg'>Register</button></Link>
+    <>
+        <div>
+            <div className='bg-dark-lighter w-full h-[7rem]'></div>
+            <Link to={`/t/${props}`}><div className='bg-dark w-full px-40 p-2 flex items-end'>
+                <img src={`http://localhost:4000/${ topic ? topic.picture : '/topics/home.png'}`} alt="Topic" className="rounded-full w-[10rem] h-p[10rem] absolute" />
+                <div className="relative left-[170px]">
+                <h1 className='text-cText-light font-semibold text-5xl'>{props}</h1>
+                <h6 className='text-cText-middle my-1'>{props === 'Home' ? props : topic.description ? topic.description : "No description"}</h6>
                 </div>
-        )}
-  </header>
-  )
-}
-
-const mapStateToProps = (state) => ({
-    errors: state.errors,
-    auth: state.auth,
-});
-
-const mapDispatchToProps = {
-    logoutUser,
+            </div></Link>
+        </div>
+    </>)
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default Header;

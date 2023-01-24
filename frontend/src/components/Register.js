@@ -2,8 +2,8 @@ import axios from 'axios';
 import { Formik, Form, Field } from 'formik';
 import { connect } from 'react-redux';
 import { v4 } from 'uuid';
-import { registerUser } from '../actions/UsersActions';
 import * as Yup from 'yup';
+import { useAddUserMutation } from '../reducers/userApiSlice';
 
 const RegisterSchema = Yup.object().shape({
     email: Yup.string()
@@ -11,9 +11,12 @@ const RegisterSchema = Yup.object().shape({
         .required('Required')
         .test('Unique Email', 'Email already in use', (value) => {
             return new Promise((res, rej) => {
-                axios.get(`http://localhost:4000/users/email/${value}`)
+                axios.get(`http://localhost:4000/api/users/?filter[email]=${value}`)
                     .then((r) => {
-                        res(!r.data);
+                        if(r.data.length === 0)
+                            res(true);
+                        else
+                            res(false);
                     })
                     .catch((err) => {
                         console.error(err);
@@ -26,9 +29,12 @@ const RegisterSchema = Yup.object().shape({
         .required('Required')
         .test('Unique Username', 'Username already in use', (value) => {
             return new Promise((res, rej) => {
-                axios.get(`http://localhost:4000/users/name/${value}`)
+                axios.get(`http://localhost:4000/api/users/?filter[username]=${value}`)
                     .then((r) => {
-                        res(!r.data);
+                        if(r.data.length === 0)
+                            res(true);
+                        else
+                            res(false);
                     })
                     .catch((err) => {
                         console.error(err);
@@ -44,7 +50,8 @@ const RegisterSchema = Yup.object().shape({
         .required('Required'),
   });
 
-const Register = ({registerUser}) => {
+const Register = () => {
+    const [ addUser ] = useAddUserMutation();
     const initialValues = {
         email: '',
         username: '',
@@ -54,18 +61,17 @@ const Register = ({registerUser}) => {
 
     const handleSubmit = (values, actions) => {
         const newUser = {
-            id: v4(),
             email: values.email,
             username: values.username,
             password: values.password,
         };
-        registerUser(newUser);
+        addUser(newUser);
         actions.resetForm();
     };
 
     return (
         <div className='bg-dark h-screen flex flex-col items-center'>
-            <h2 className='text-gray-300 text-3xl my-4'>Register</h2>
+            <h2 className='text-gray-300 text-3xl my-4 font-semibold'>Register</h2>
             <Formik initialValues={initialValues} validateOnBlur={true} validateOnChange={false} validationSchema={RegisterSchema} onSubmit={handleSubmit}>
                 {({ errors }) => (
                     <Form  className='flex flex-col items-center'>
@@ -97,7 +103,7 @@ const Register = ({registerUser}) => {
                             <Field type='password' name='password2' />
                             {errors.password2 ? (<div className='text-red-400'>{errors.password2}</div>) : null}
                         </div>
-                        <button type='submit' className='bg-gray-700 text-gray-300 my-4 px-3 py-1 rounded-lg'>Register</button>
+                        <button type='submit' className='py-1 px-4 text-white font-semibold mx-7 bg-button-orange rounded-2xl'>Register</button>
                     </Form>
                 )}
             </Formik>
@@ -105,12 +111,6 @@ const Register = ({registerUser}) => {
     );
 };
 
-const mapStateToProps = (state) => ({
-    state: state
-});
 
-const mapDispatchToProps = {
-    registerUser,
-};
 
-export default connect(mapStateToProps, mapDispatchToProps)(Register);
+export default Register;
