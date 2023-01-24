@@ -7,8 +7,8 @@ const upload = require('./../multer');
 router.get('/', userController.getUsers);
 router.get('/current', checkAuth, userController.getCurrentUser)
 router.get('/user/:id', userController.getUser);
-router.put('/current', checkAuth, upload.single('picture'), userController.updateCurrentUser);
-router.put('/user/:id', checkAuth, upload.single('picture'), userController.updateUser);
+router.put('/current', checkAuth, upload.single('avatar'), userController.updateCurrentUser);
+router.put('/user/:id', checkAuth, upload.single('avatar'), userController.updateUser);
 router.delete('/current', checkAuth,userController.deleteCurrentUser);
 router.delete('/user/:id', checkAuth, userController.deleteUser);
 

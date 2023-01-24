@@ -65,7 +65,7 @@ const updateTopic = async (req, res) => {
         return res.status(403).json('Not authorized');
 
     const { name, description } = req.body;
-    const picture = req.file.filename;
+    const picture = req.file?.filename;
     const { topicName } = req.params;
 
     if(!name && !description && !picture)

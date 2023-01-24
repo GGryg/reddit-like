@@ -77,7 +77,7 @@ const updateComment = async (req, res) => {
         const comment = await Comment.findById(id);
         if(!comment)
             return res.status(404).json('Comment not found');
-        if(comment.user.toString() !== req.user.id || req.user.role !== 'admin' || req.user.role !== 'moderator')
+        if(comment.user.toString() !== req.user.id && req.user.role !== 'admin' && req.user.role !== 'moderator')
             return res.status(403).json('Not authorized')
         
         const { content, links } = req.body;
@@ -110,7 +110,7 @@ const deleteComment = async (req, res) => {
         const comment = await Comment.findById(id);
         if(!comment)
             return res.status(404).json('Comment not found');
-        if(comment.user.toString() !== req.user.id || req.user.role !== 'admin' || req.user.role !== 'moderator')
+        if(comment.user.toString() !== req.user.id && req.user.role !== 'admin' && req.user.role !== 'moderator')
             return res.status(403).json('Not authorized')
 
         await Comment.findByIdAndDelete(id);

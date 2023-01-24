@@ -36,7 +36,6 @@ const createPost = async (req, res) => {
     const { id } = req.user;
     const { title, content, links, topic } = req.body;
     const picture = req.file?.filename;
-    console.log(req.headers);
 
     if(!title)
         return res.status(400).json('There is missing field');
@@ -67,11 +66,11 @@ const updatePost = async (req, res) => {
         const post = await Post.findById(id);
         if(!post)
             return res.status(404).json('Post not found');
-        if(post.user.toString() !== req.user.id || req.user.role !== 'admin' || req.user.role !== 'moderator')
-            return res.status(403).json('Not authorized')
+        if(post.user.toString() !== req.user.id && req.user.role !== 'admin' && req.user.role !== 'moderator')
+            return res.status(403).json('Not authorized');
         
         const { title, content, links } = req.body;
-        const picture = req.file.filename;
+        const picture = req.file?.filename;
 
         if(!title && !content && !links && !picture)
             return res.status(400).json('There are missing fields');
@@ -105,7 +104,7 @@ const deletePost = async (req, res) => {
         const post = await Post.findById(id);
         if(!post)
             return res.status(404).json('Post not found');
-        if(post.user.toString() !== req.user.id || req.user.role !== 'admin' || req.user.role !== 'moderator')
+        if(post.user.toString() !== req.user.id && req.user.role !== 'admin' && req.user.role !== 'moderator')
             return res.status(403).json('Not authorized')
 
         await Post.findByIdAndDelete(id);

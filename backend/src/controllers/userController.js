@@ -123,7 +123,7 @@ const updateUser = async (req, res) => {
     
     const updatedValues = {};
     const { email, description, role } = req.body;
-    const avatar = req.file.filename;
+    const avatar = req.file?.filename;
 
     if(!email && !avatar && !description && !role)
         return res.status(400).json('There are missing fields');
@@ -154,7 +154,7 @@ const updateUser = async (req, res) => {
 const updateCurrentUser = async (req, res) => {
     const { user } = req;
     const { email, description } = req.body;
-    const avatar = req.file.filename;
+    const avatar = req.file?.filename;
 
     if (!email && !description && !avatar)
         return res.status(400).json('There are missing fields');
