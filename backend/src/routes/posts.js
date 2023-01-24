@@ -9,5 +9,6 @@ router.get('/:id', postController.getPost);
 router.post('/', checkAuth, upload.single('picture'), postController.createPost);
 router.put('/:id', checkAuth, upload.single('picture'), postController.updatePost);
 router.delete('/:id', checkAuth, postController.deletePost);
+router.get('/p/search', postController.searchPost);
 
 module.exports = router;

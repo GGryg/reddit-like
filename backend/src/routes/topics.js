@@ -5,9 +5,9 @@ const router = express.Router();
 const upload = require('./../multer');
 
 router.get('/', topicController.getTopics);
-router.get('/:id', topicController.getTopic)
+router.get('/:topicName', topicController.getTopic)
 router.post('/', checkAuth, upload.single('picture'), topicController.createTopic);
-router.put('/:id', checkAuth, upload.single('picture'), topicController.updateTopic);
-router.delete('/:id', checkAuth, topicController.deleteTopic);
+router.put('/:topicName', checkAuth, upload.single('picture'), topicController.updateTopic);
+router.delete('/:topicName', checkAuth, topicController.deleteTopic);
 
 module.exports = router;

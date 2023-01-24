@@ -36,7 +36,7 @@ const createPost = async (req, res) => {
     const { id } = req.user;
     const { title, content, links, topic } = req.body;
     const picture = req.file?.filename;
-    console.log(req.file);
+    console.log(req.headers);
 
     if(!title)
         return res.status(400).json('There is missing field');
@@ -53,7 +53,7 @@ const createPost = async (req, res) => {
         const newPost = new Post(post);
         await newPost.save();
 
-        return res.status(201).json('Added a new post');
+        return res.status(201).json(newPost);
     }
     catch (err) {
         console.error(err);
@@ -117,10 +117,25 @@ const deletePost = async (req, res) => {
     }
 };
 
+const searchPost = async (req, res) => {
+    const { search } = req.query;
+    console.log(search);
+    const filters = search ? {$or: [{title: {$regex: `.*${search}.*`, $options: "i"}}, {content: {$regex: `.*${search}.*`, $options: "i"}}]} : {_id: null};
+    try{
+        const posts = await Post.find(filters);
+        res.json(posts);
+    }
+    catch(err){
+        console.error(err);
+        return res.status(500).json('error');
+    }
+};
+
 module.exports = {
     getPosts,
     getPost,
     createPost,
     updatePost,
     deletePost,
+    searchPost,
 };

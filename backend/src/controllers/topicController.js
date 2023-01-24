@@ -66,7 +66,7 @@ const updateTopic = async (req, res) => {
 
     const { name, description } = req.body;
     const picture = req.file.filename;
-    const { id } = req.params;
+    const { topicName } = req.params;
 
     if(!name && !description && !picture)
         return res.status(400).json('There are missing fields');
@@ -80,7 +80,7 @@ const updateTopic = async (req, res) => {
         updatedValues.picture = picture;
 
     try{
-        const updatedTopic = await Topic.findByIdAndUpdate(id, updatedValues, {new: true});
+        const updatedTopic = await Topic.findOneAndUpdate({name: topicName}, updatedValues, {new: true});
         if(!updatedTopic)
             return res.status(404).json('Topic not found');
         
@@ -96,10 +96,10 @@ const deleteTopic = async (req, res) => {
     if(req.user.role !== 'admin')
         return res.status(403).json('Not authorized');
 
-    const { id } = req.params;
+    const { topicName } = req.params;
 
     try{
-        const topic = await Topic.findByIdAndDelete(id);
+        const topic = await Topic.findAndDelete(topicName);
         if(!topic)
             return res.status(404).json('Topic not found');
 
