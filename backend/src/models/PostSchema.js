@@ -17,6 +17,7 @@ const PostSchema = new Schema({
     },
     links: {
         type: String,
+        default: '',
     },
     user: {
         type: Schema.Types.ObjectId,

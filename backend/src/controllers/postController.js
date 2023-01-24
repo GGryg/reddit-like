@@ -4,10 +4,10 @@ const getPosts = async (req, res) => {
     const { sort, filter } = req.query;
     const sortQuery = sort || {};
     const filterQuery = filter || {};
+    console.log(filter);
 
     try{
         const posts = await Post.find(filterQuery).sort(sortQuery);
-
         return res.status(200).json(posts);
     }
     catch (err) {
@@ -32,25 +32,11 @@ const getPost = async (req, res) => {
     }
 };
 
-const getCurrentPosts = async (req, res) => {
-    const { id } = req.user;
-
-    try{
-        const post = await Post.find({user: id});
-        if(!post)
-            return res.status(404).json('Post not found');
-
-        return res.status(200).json(post);
-    }
-    catch (err) {
-        console.error(err);
-        return res.status(500).json('error');
-    }
-};
-
 const createPost = async (req, res) => {
     const { id } = req.user;
-    const { title, content, links, picture, topic } = req.body;
+    const { title, content, links, topic } = req.body;
+    const picture = req.file?.filename;
+    console.log(req.file);
 
     if(!title)
         return res.status(400).json('There is missing field');
@@ -62,7 +48,6 @@ const createPost = async (req, res) => {
         post.links = links;
     if(picture)
         post.picture = picture;
-    // fix picture later
 
     try{
         const newPost = new Post(post);
@@ -85,7 +70,8 @@ const updatePost = async (req, res) => {
         if(post.user.toString() !== req.user.id || req.user.role !== 'admin' || req.user.role !== 'moderator')
             return res.status(403).json('Not authorized')
         
-        const { title, content, links, picture } = req.body;
+        const { title, content, links } = req.body;
+        const picture = req.file.filename;
 
         if(!title && !content && !links && !picture)
             return res.status(400).json('There are missing fields');
@@ -99,7 +85,6 @@ const updatePost = async (req, res) => {
             updatedValues.links = links;
         if(picture)
             updatedValues.picture = picture;
-        // fix picture later
 
         const updatedPost = await Post.findByIdAndUpdate(id, updatedValues, {new: true});
         if(!updatedPost)
@@ -135,7 +120,6 @@ const deletePost = async (req, res) => {
 module.exports = {
     getPosts,
     getPost,
-    getCurrentPosts,
     createPost,
     updatePost,
     deletePost,

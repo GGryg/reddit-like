@@ -19,10 +19,10 @@ const getTopics = async (req, res) => {
 };
 
 const getTopic = async (req, res) => {
-    const { topicName } = req.params;
+    const { id } = req.params;
 
     try{
-        const topic = await Topic.findOne({name: topicName});
+        const topic = await Topic.findById(id);
         if(!topic)
             return res.status(404).json('Topic not found');
 
@@ -35,13 +35,18 @@ const getTopic = async (req, res) => {
 };
 
 const createTopic = async (req, res) => {
+    console.log(req.user);
     if(req.user.role !== 'admin')
         return res.status(403).json('Not authorized');
 
     const { name, description } = req.body;
-    const topic = {name: name};
+    const picture = req.file?.filename;
+    console.log(req.file);
+    const topic = {name: name, picture: picture};
     if(description)
         topic.description = description;
+    if(picture)
+        topic.picture = picture;
 
     try{
         const newTopic = new Topic(topic);
@@ -59,8 +64,9 @@ const updateTopic = async (req, res) => {
     if(req.user.role !== 'admin')
         return res.status(403).json('Not authorized');
 
-    const { name, description, picture } = req.body;
-    const findQuery = { name: req.params.topicName };
+    const { name, description } = req.body;
+    const picture = req.file.filename;
+    const { id } = req.params;
 
     if(!name && !description && !picture)
         return res.status(400).json('There are missing fields');
@@ -72,10 +78,9 @@ const updateTopic = async (req, res) => {
         updatedValues.description = description;
     if(picture)
         updatedValues.picture = picture;
-    // fix picture later
 
     try{
-        const updatedTopic = await Topic.findOneAndUpdate(findQuery, updatedValues, {new: true});
+        const updatedTopic = await Topic.findByIdAndUpdate(id, updatedValues, {new: true});
         if(!updatedTopic)
             return res.status(404).json('Topic not found');
         
@@ -91,10 +96,10 @@ const deleteTopic = async (req, res) => {
     if(req.user.role !== 'admin')
         return res.status(403).json('Not authorized');
 
-    const { topicName } = req.params;
+    const { id } = req.params;
 
     try{
-        const topic = await Topic.findOneAndDelete({name: topicName});
+        const topic = await Topic.findByIdAndDelete(id);
         if(!topic)
             return res.status(404).json('Topic not found');
 

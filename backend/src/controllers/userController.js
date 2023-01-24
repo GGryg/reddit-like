@@ -50,8 +50,7 @@ const login = async (req, res) => {
             role: user.role,
         };
         const token = jwt.sign(payload, process.env.SECRET, {expiresIn: '7d'});
-
-        return res.cookie('token', token, {httpOnly: true}).status(200).json({success: true});        
+        return res.cookie('token', token, {httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000}).status(200).json({success: true, token: token});        
     }
     catch (err) {
         console.error(err);
@@ -81,15 +80,14 @@ const getUsers = async (req, res) => {
 };
 
 const getUser = async (req, res) => {
-    const { username } = req.params;
-    const userQuery = { username: username };
+    const { id } = req.params;
 
     try{
         let user;
-        if(req.user.role !== 'admin' || req.user.role !== 'moderator')
-            user = await User.findOne(userQuery).select('email username description avatar role');
+        if(req.user && (req.user.role === 'admin' || req.user.role === 'moderator'))
+            user = await User.findById(id);
         else
-            user = await User.findOne(userQuery);
+            user = await User.findById(id).select('email username description avatar role');
 
         if (!user)
             return res.status(404).json('User not found');
@@ -124,7 +122,8 @@ const updateUser = async (req, res) => {
         return res.status(403).json('Not authorized');
     
     const updatedValues = {};
-    const { email, avatar, description, role } = req.body;
+    const { email, description, role } = req.body;
+    const avatar = req.file.filename;
 
     if(!email && !avatar && !description && !role)
         return res.status(400).json('There are missing fields');
@@ -138,7 +137,6 @@ const updateUser = async (req, res) => {
         updatedValues.role = role;
     if (avatar)
         updatedValues.avatar = avatar;
-    // fix avatar later
 
     try{
         const updatedUser = await User.findOneAndUpdate(findQuery, updatedValues, {new: true});
@@ -155,7 +153,8 @@ const updateUser = async (req, res) => {
 
 const updateCurrentUser = async (req, res) => {
     const { user } = req;
-    const { email, description, avatar } = req.body;
+    const { email, description } = req.body;
+    const avatar = req.file.filename;
 
     if (!email && !description && !avatar)
         return res.status(400).json('There are missing fields');
@@ -167,7 +166,6 @@ const updateCurrentUser = async (req, res) => {
         updatedValues.description = description;
     if (avatar)
         updatedValues.avatar = avatar;
-    // fix avatar later
 
     try{
         const updatedUser = await User.findByIdAndUpdate(user.id, updatedValues, {new: true}).select('email username description role avatar');
@@ -225,11 +223,10 @@ const deleteUser = async (req, res) => {
     if (req.user.role !== 'admin')
         return res.status(403).json('Not authorized');
     
-    const { username } = req.params;
-    const findQuery = { username: username }
+    const { id } = req.params;
 
     try{
-        const user = await User.findOneAndDelete(findQuery);
+        const user = await User.findByIdAndDelete(id);
         if(!user)
             return res.status(404).json('User not found');
         
