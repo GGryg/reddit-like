@@ -12,8 +12,13 @@ const Post = ({ post }) => {
     useGetPostsQuery();
     const auth = useSelector(selectCurrentUser);
     const check = auth.user.id === post.user || auth.user.role === 'admin' || auth.user.role === 'moderator';
-    const handleDelete = () => {
-        axios.delete(`http://localhost:4000/api/posts/${post._id}`, {withCredentials: true});
+    const handleDelete = async () => {
+        try{
+            await axios.delete(`http://localhost:4000/api/posts/${post._id}`, {withCredentials: true});
+        }
+        catch(err){
+            console.error(err);
+        }
     };
     
     //const post = useSelector(state => selectPostsById(state, postId));

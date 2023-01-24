@@ -2,6 +2,7 @@ import * as Yup from 'yup';
 import { Formik, Field, Form } from "formik";
 import { useLayoutEffect, useState } from "react";
 import axios from "axios";
+import {  RiDeleteBinFill } from 'react-icons/ri'
 
 const Setting = () => {
     const initialValues = {
@@ -81,6 +82,16 @@ const Setting = () => {
         }, [])
 
     if(loading) return <div>Loading</div>
+    
+    const handleDelete = async() => {
+        try{
+            await axios.delete(`http://localhost:4000/api/users/current`, {withCredentials: true});
+        }
+        catch(err){
+            console.error(err);
+        }
+    }
+
     return <div className="bg-dark my-10 mx-20 text-cText-light p-4 rounded-lg">Profile/Settings
     <div className="flex gap-10">
         <div>
@@ -141,6 +152,9 @@ const Setting = () => {
                     )}
                 </Formik>
             </div>
+        </div>
+        <div>
+            <RiDeleteBinFill onClick={() => handleDelete()} className='w-6 h-6 text-red-600'/>
         </div>
     </div>
     </div>

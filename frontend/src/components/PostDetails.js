@@ -17,9 +17,14 @@ const PostDetails = () => {
 
     const navigate = useNavigate();
     const auth = useSelector(selectCurrentUser);
-    const handleDelete = () => {
-        axios.delete(`http://localhost:4000/api/posts/${postId}`, {withCredentials: true});
-        navigate(`/t/${topic}`)
+    const handleDelete = async () => {
+        try{
+            axios.delete(`http://localhost:4000/api/posts/${postId}`, {withCredentials: true});
+            navigate(`/t/${topic}`)
+        }
+        catch(err){
+            console.error(err);
+        }
     };
     
     if(!isLoading){

@@ -11,8 +11,14 @@ import { RiEdit2Fill, RiDeleteBinFill } from 'react-icons/ri'
 
 const Comment = ({ commentId }) => {
     const auth = useSelector(selectCurrentUser);
-    const handleDelete = () => {
-        axios.delete(`http://localhost:4000/api/comments/${commentId}`, {withCredentials: true});
+    const handleDelete = async () => {
+        try{
+            await axios.delete(`http://localhost:4000/api/comments/${commentId}`, {withCredentials: true});
+        }
+        catch(err){
+            console.error(err);
+        }
+        
     };
     
     const comment = useSelector(state => selectCommentById(state, commentId));
